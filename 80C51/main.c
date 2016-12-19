@@ -6,7 +6,7 @@
 #include "keyboard.h"
 #include "fruit.h"
 #include "gameboard.h"
-
+//TEST
 // Snake-0
 
 #ifndef TEST
@@ -44,6 +44,7 @@ void main(void) {
 	play();
 
 	while(1);
+
 }
 
 #else
