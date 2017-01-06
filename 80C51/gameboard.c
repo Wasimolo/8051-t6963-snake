@@ -37,6 +37,8 @@ void GMB_initialize() {
 	GMB_copyFromRomToCg(11, SNAKE_DEAD);
 
 	GMB_copyFromRomToCg(12, FRUIT);
+
+	
 }
 
 /**
@@ -47,8 +49,17 @@ void GMB_initialize() {
  * @param x1, y1: Coordonnées de l'angle inférieur gauche.
  */
 void GMB_draw(unsigned char x0, unsigned char y0, unsigned char x1, unsigned char y1) {
-	// À faire
+	unsigned char i, n;
+
+	for (i = y0; i < y1; i++) {
+		for (n= x0; n< x1; n++) {
+			//address = T6963C_calculateAddress(i - 1, BDD_SCREEN_Y - 1);
+				
+				T6963C_writeAt(i, n, '*');
+			}
+		}
 }
+
 
 /**
  * Remplit avec des espaces le rectangle défini par les coordonnées.

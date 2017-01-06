@@ -51,6 +51,8 @@ void main(void) {
 #include <stdio.h>
 void main(void) {
 	int testsInError = 0;
+    	printf("%d YOOO",testsInError);
+	
 	STDIO_initialize();
 
 	testsInError += testBuffer();
