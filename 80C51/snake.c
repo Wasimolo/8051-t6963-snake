@@ -12,7 +12,23 @@
  * @param snake La description du serpent.
  */
 void SNAKE_move(Snake *snake) {
-	// À faire
+	switch (snake->direction) {
+		case MOVES_UP:
+				snake->position.y ++;
+		break;
+	
+		case MOVES_DOWN:
+				snake->position.y --;
+		break;
+	
+		case MOVES_LEFT:
+				snake->position.x --;
+		break;
+		
+		case MOVES_RIGHT:
+			snake->position.x ++;
+		break;
+	}
 }
 
 /**
@@ -23,7 +39,23 @@ void SNAKE_move(Snake *snake) {
 void SNAKE_liveOrDie(Snake *snake) {
 	unsigned char c = T6963C_readFrom(snake->position.x, snake->position.y);
 
-	// À faire.
+	switch (c){
+		case FRUIT:
+			snake->status=EATING;
+			break;
+		case 0x00:
+			snake->status=ALIVE;
+			break;
+		case SNAKE_BODY:
+			snake->status=DEAD;
+			break;
+		case SNAKE_SWALLOW:
+			snake->status=DEAD;
+			break;
+		default: 
+			snake->status=DEAD;
+			break;
+		}
 }
 
 /**
@@ -40,7 +72,40 @@ void SNAKE_showHead(Snake *snake) {
  * @param snake La définition du serpent.
  */
 void SNAKE_showBody(Snake *snake) {
-	// À faire.
+	unsigned char nbr_corps=0;
+	unsigned char x=0, y=0;
+
+	
+	//# Lorsque le serpent est en vie il se déplace d'une case
+	if((snake->status==ALIVE)){
+		//# Supression de la queu du serpent 
+			for (x = SNAKE_LIMIT_X0+1; x <= SNAKE_LIMIT_X1-1; x++) {
+				for (y= SNAKE_LIMIT_Y0+1; y< SNAKE_LIMIT_Y1-1; y++) {
+					//Test si ls case aoutour sont des éléments du corps
+					if(T6963C_readFrom(x,y)==SNAKE_BODY){
+						nbr_corps =0;
+						if(T6963C_readFrom(x,y+1)==SNAKE_BODY){nbr_corps++;}				//Haut
+						if(T6963C_readFrom(x,y-1)==SNAKE_BODY){nbr_corps++;}				//Bas
+						if(T6963C_readFrom(x+1,y)==SNAKE_BODY){nbr_corps++;}				//Droite
+						if(T6963C_readFrom(x-1,y)==SNAKE_BODY){nbr_corps++;}				//Gauche
+						
+						if((nbr_corps == 1)  ){
+							T6963C_writeAt(x,y,0x00);
+						}
+					}
+				}
+				
+			}
+			T6963C_writeAt(snake->position.x, snake->position.y,SNAKE_BODY);		
+	}
+
+	//# Lorsque le serpent mange un fruit il grandit d'une case
+	if(snake->status==EATING){
+		//Ajoute une case
+		T6963C_writeAt(snake->position.x, snake->position.y,SNAKE_BODY);
+
+	}
+	
 }
 
 /**
@@ -48,9 +113,48 @@ void SNAKE_showBody(Snake *snake) {
  * Le serpent ne peut jamais tourner de 180º en un mouvement.
  * @param snake La description du serpent.
  * @param arrow La direction désirée.
+ Interdits
+	Gauche ->
  */
 void SNAKE_turn(Snake *snake, Arrow arrow) {
-	// À faire.
+
+switch (arrow) {
+		case ARROW_UP:
+				if(snake->direction == MOVES_DOWN){
+					snake->direction=MOVES_DOWN;
+				}else{
+					snake->direction=MOVES_UP;
+				}
+		break;
+	
+		case ARROW_DOWN:
+				if(snake->direction == MOVES_UP){
+					snake->direction=MOVES_UP;
+				}else{
+					snake->direction=MOVES_DOWN;
+				}
+		break;
+	
+		case ARROW_LEFT:
+				if(snake->direction == MOVES_RIGHT){
+					snake->direction=MOVES_RIGHT;
+				}else{
+					snake->direction=MOVES_LEFT;
+				}
+		break;
+		
+		case ARROW_RIGHT:
+				if(snake->direction == MOVES_LEFT){
+					snake->direction=MOVES_LEFT;
+				}else{
+					snake->direction=MOVES_RIGHT;
+				}
+		break;
+		
+		case ARROW_NEUTRAL:
+				snake->direction=snake->direction;
+		break;
+	}
 }
 
 /**

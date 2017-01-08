@@ -49,15 +49,48 @@ void GMB_initialize() {
  * @param x1, y1: Coordonnées de l'angle inférieur gauche.
  */
 void GMB_draw(unsigned char x0, unsigned char y0, unsigned char x1, unsigned char y1) {
-	unsigned char i, n;
+	
+	unsigned int i, n;
 
-	for (i = y0; i < y1; i++) {
-		for (n= x0; n< x1; n++) {
-			//address = T6963C_calculateAddress(i - 1, BDD_SCREEN_Y - 1);
+	for (i = x0; i <= x1; i++) {
+		for (n= y0; n< y1; n++) {
+//########################################### BORDURE DROITE
+				if((i==x0) && (n==y0)) {
+					T6963C_writeAt(i, n,OBSTACLE_A);
+				} 
+				if ((i==x0) &&(n>0)){
+					T6963C_writeAt(i, n,OBSTACLE_D);				
+				}
+				if ((i==x0) &&(n==y1-1)){
+					T6963C_writeAt(i, n,OBSTACLE_F);				
+				}
+//########################################### BORDURE GAUCHE
+				if((i==x1) && (n==y0)) {
+					T6963C_writeAt(i, n,OBSTACLE_C);
+				} 
+
+				if((i==x1) &&(n>0)) {
+					T6963C_writeAt(i, n,OBSTACLE_E);
+				}
+
+				if ((i==x1) &&(n==y1-1)){
+					T6963C_writeAt(i, n,OBSTACLE_H);				
+				}
 				
-				T6963C_writeAt(i, n, '*');
+
+//########################################### BORDURE HAUT
+
+				if((i>x0) && (i<x1)  && (n==y0)) {
+					T6963C_writeAt(i, n,OBSTACLE_B);
+				} 
+
+//########################################### BORDURE BAS
+				if((i>x0) && (i<x1) && (n==y1-1)) {
+					T6963C_writeAt(i, n,OBSTACLE_G);
+				} 
 			}
 		}
+
 }
 
 
@@ -68,7 +101,12 @@ void GMB_draw(unsigned char x0, unsigned char y0, unsigned char x1, unsigned cha
  * @param x1, y1: Coordonnées de l'angle inférieur gauche.
  */
 void GMB_clear(unsigned char x0, unsigned char y0, unsigned char x1, unsigned char y1) {
-	// À faire.
+	unsigned int address;
+	unsigned int i, n;
+			for (n= y0+1; n<(y1-1); n++) {
+				address = T6963C_calculateAddress(x0+1,n);
+				T6963C_autoRepeat(address, 0x00, (x1-1)); //Caractère espace
+			}
 }
 
 /**
@@ -77,9 +115,38 @@ void GMB_clear(unsigned char x0, unsigned char y0, unsigned char x1, unsigned ch
  * La fonction ne vérifie pas si le texte dépasse les bords de l'écran.
  * @param x0, y0 L'angle supérieur droit du rectangle.
  * @param text Le texte à afficher.
+ 		".........."
+		".ABBBBBC.."
+		".D TXT E.."
+		".FGGGGGH.."
+		".........."
  */
 void GMB_display(unsigned char x0, unsigned char y0, char *text) {
-	// À faire.
+	unsigned int address;
+	unsigned int i;
+		
+		int taille=0;
+		while(text[taille]){
+			taille++;
+		}
+
+		//Première ligne
+		T6963C_writeAt(x0, y0,OBSTACLE_A);
+		address = T6963C_calculateAddress(x0+1,y0);
+		T6963C_autoRepeat(address, OBSTACLE_B, (taille)); 
+		T6963C_writeAt(x0+taille+1, y0,OBSTACLE_C);
+		
+		//Ligne millieu
+		T6963C_writeAt(x0, y0+1,OBSTACLE_D);
+		T6963C_writeAt(x0+taille+1, y0+1,OBSTACLE_E);
+		address = T6963C_calculateAddress(x0+1,y0+1);
+		T6963C_autoWrite(address,text,taille);
+		//Dernière ligne
+		T6963C_writeAt(x0, y0+2,OBSTACLE_F);
+		address = T6963C_calculateAddress(x0+1,y0+2);
+		T6963C_autoRepeat(address, OBSTACLE_G, (taille)); 
+		T6963C_writeAt(x0+taille+1, y0+2,OBSTACLE_H);
+
 }
 
 #ifdef TEST
