@@ -19,7 +19,11 @@ unsigned char out = 0;
  * @param c Le caractère.
  */
 void BUFFER_in(char c) {
-	// À faire...
+	if(in > BUFFER_SIZE){
+		in=0;
+	}
+		buffer[in] = c;
+		in++;
 }
 
 /**
@@ -27,8 +31,13 @@ void BUFFER_in(char c) {
  * @return Le caractère.
  */
 char BUFFER_out() {
-	// À faire...
-	return 0;
+	char c;
+	if(out > BUFFER_SIZE){
+		out=0;
+	}
+	c = buffer[out];
+	out++;
+	return c;
 }
 
 /**

@@ -14,11 +14,11 @@
 void SNAKE_move(Snake *snake) {
 	switch (snake->direction) {
 		case MOVES_UP:
-				snake->position.y ++;
+				snake->position.y --;
 		break;
 	
 		case MOVES_DOWN:
-				snake->position.y --;
+				snake->position.y ++;
 		break;
 	
 		case MOVES_LEFT:
@@ -37,14 +37,20 @@ void SNAKE_move(Snake *snake) {
  * @param snake La description du serpent.
  */
 void SNAKE_liveOrDie(Snake *snake) {
-	unsigned char c = T6963C_readFrom(snake->position.x, snake->position.y);
-
+	unsigned char c = 0;
+	c=T6963C_readFrom(snake->position.x, snake->position.y);
+	
 	switch (c){
 		case FRUIT:
 			snake->status=EATING;
+			snake->caloriesLeft = FRUIT_CALORIES;
 			break;
-		case 0x00:
-			snake->status=ALIVE;
+		case EMPTY:
+			if(((snake->position.x > SNAKE_LIMIT_X0) && ((snake->position.x < SNAKE_LIMIT_X1))) && ((snake->position.y > SNAKE_LIMIT_Y0 ) && (snake->position.y < SNAKE_LIMIT_Y1 ))){
+				snake->status=ALIVE;
+			}else{
+				snake->status=DEAD;
+			}
 			break;
 		case SNAKE_BODY:
 			snake->status=DEAD;
@@ -52,10 +58,43 @@ void SNAKE_liveOrDie(Snake *snake) {
 		case SNAKE_SWALLOW:
 			snake->status=DEAD;
 			break;
-		default: 
+		case OBSTACLE_A:
 			snake->status=DEAD;
 			break;
+		case OBSTACLE_B:
+			snake->status=DEAD;
+		break;
+		case OBSTACLE_C:
+			snake->status=DEAD;
+		break;
+		case OBSTACLE_D:
+			snake->status=DEAD;
+			break;
+		case OBSTACLE_E:
+			snake->status=DEAD;
+		break;
+		case OBSTACLE_F:
+			snake->status=DEAD;
+		break;
+		case OBSTACLE_G:
+			snake->status=DEAD;
+		break;
+		case OBSTACLE_H:
+			snake->status=DEAD;
+		break;
+		default: 
+			snake->status=ALIVE;
+			break;
 		}
+
+/*#define OBSTACLE_A (0x21 + CHAR_BASE)
+#define OBSTACLE_B (0x22 + CHAR_BASE)
+#define OBSTACLE_C (0x23 + CHAR_BASE)
+#define OBSTACLE_D (0x24 + CHAR_BASE)
+#define OBSTACLE_E (0x25 + CHAR_BASE)
+#define OBSTACLE_F (0x26 + CHAR_BASE)
+#define OBSTACLE_G (0x27 + CHAR_BASE)
+#define OBSTACLE_H*/
 }
 
 /**
@@ -63,7 +102,13 @@ void SNAKE_liveOrDie(Snake *snake) {
  * @param snake La définition du serpent.
  */
 void SNAKE_showHead(Snake *snake) {
-	// À faire.
+			
+	if (snake->status != DEAD){
+			T6963C_writeAt(snake->position.x,snake->position.y,SNAKE_HEAD);
+		}else{
+			T6963C_writeAt(snake->position.x,snake->position.y,SNAKE_DEAD);
+		}
+			
 }
 
 /**
@@ -74,37 +119,30 @@ void SNAKE_showHead(Snake *snake) {
 void SNAKE_showBody(Snake *snake) {
 	unsigned char nbr_corps=0;
 	unsigned char x=0, y=0;
+	unsigned int i=0;
+
+		BUFFER_in(snake->position.x);
+		BUFFER_in(snake->position.y);
+		if (snake->status == EATING){
+			T6963C_writeAt(snake->position.x,snake->position.y,SNAKE_SWALLOW);
+		}else{
+			T6963C_writeAt(snake->position.x,snake->position.y,SNAKE_BODY);
+		}
+			//Initialise le snake avec un corps 
+			if(snake->caloriesLeft> 0){ //snake->status = ALIVE  &&
+			
+				snake->caloriesLeft--;
+			}else{	
+
+					x = BUFFER_out();
+					y = BUFFER_out();
+					T6963C_writeAt(x,y,EMPTY);
+
+			}
+		
+			
 
 	
-	//# Lorsque le serpent est en vie il se déplace d'une case
-	if((snake->status==ALIVE)){
-		//# Supression de la queu du serpent 
-			for (x = SNAKE_LIMIT_X0+1; x <= SNAKE_LIMIT_X1-1; x++) {
-				for (y= SNAKE_LIMIT_Y0+1; y< SNAKE_LIMIT_Y1-1; y++) {
-					//Test si ls case aoutour sont des éléments du corps
-					if(T6963C_readFrom(x,y)==SNAKE_BODY){
-						nbr_corps =0;
-						if(T6963C_readFrom(x,y+1)==SNAKE_BODY){nbr_corps++;}				//Haut
-						if(T6963C_readFrom(x,y-1)==SNAKE_BODY){nbr_corps++;}				//Bas
-						if(T6963C_readFrom(x+1,y)==SNAKE_BODY){nbr_corps++;}				//Droite
-						if(T6963C_readFrom(x-1,y)==SNAKE_BODY){nbr_corps++;}				//Gauche
-						
-						if((nbr_corps == 1)  ){
-							T6963C_writeAt(x,y,0x00);
-						}
-					}
-				}
-				
-			}
-			T6963C_writeAt(snake->position.x, snake->position.y,SNAKE_BODY);		
-	}
-
-	//# Lorsque le serpent mange un fruit il grandit d'une case
-	if(snake->status==EATING){
-		//Ajoute une case
-		T6963C_writeAt(snake->position.x, snake->position.y,SNAKE_BODY);
-
-	}
 	
 }
 
@@ -409,6 +447,7 @@ int bddSnakeGrows() {
 	BDD_clear();
 	for (n=0; n<7; n++) {
 		SNAKE_iterate(&snake, ARROW_NEUTRAL);
+		//assertEquals(snake.status, ALIVE, "88");
 	}
 	
 	return BDD_assert(c, "SNG");

@@ -27,6 +27,7 @@ void play() {
 	Arrow arrow;
 
 	GMB_draw(SNAKE_LIMIT_X0, SNAKE_LIMIT_Y0, SNAKE_LIMIT_X1, SNAKE_LIMIT_Y1);
+	
 	FRUIT_place();
 	do {
 		arrow = KEYBOARD_readArrows(keyboard);

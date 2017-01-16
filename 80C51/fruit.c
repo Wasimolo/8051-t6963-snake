@@ -1,10 +1,10 @@
 #include <stdlib.h>
+#include <time.h>
 #include "main.h"
 #include "fruit.h"
 #include "t6963c.h"
 #include "gameboard.h"
 #include "test.h"
-#include "rand.h"
 
 /**
  * Place un fruit à la position indiquée.
@@ -17,7 +17,7 @@ void FRUIT_placeInFreeSpace(Position *position) {
 	char c = T6963C_readFrom(position->x, position->y);
    
    if(c != EMPTY){
-      position->x = rand_interval(SNAKE_LIMIT_X0,SNAKE_LIMIT_X1);
+      FRUIT_random(position);
       FRUIT_placeInFreeSpace(position);
    }
    
@@ -32,8 +32,10 @@ void FRUIT_placeInFreeSpace(Position *position) {
  * @param position Paramètre de sortie, avec la position du fruit.
  */
 void FRUIT_random(Position *position) {
-   position->x = rand_interval(SNAKE_LIMIT_X0,SNAKE_LIMIT_X1);
-   position->y = rand_interval(SNAKE_LIMIT_Y0,SNAKE_LIMIT_Y1);
+   
+   
+   position->x  = rand() % (SNAKE_LIMIT_X1 - SNAKE_LIMIT_X0 +1)+SNAKE_LIMIT_X0 ;
+   position->y  = rand() %  (SNAKE_LIMIT_Y1 - SNAKE_LIMIT_Y0 + 1) + SNAKE_LIMIT_Y0;
 
 }
 

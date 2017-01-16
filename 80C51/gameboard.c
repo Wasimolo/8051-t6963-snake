@@ -47,49 +47,34 @@ void GMB_initialize() {
  * que le serpent ne puisse pas le traverser.
  * @param x0, y0: Coordonnées de l'angle supérieur droit.
  * @param x1, y1: Coordonnées de l'angle inférieur gauche.
+		"ABBBBBBBBC",
+		"D........E",
+		"D........E",
+		"D........E",
+		"FGGGGGGGGH"
  */
 void GMB_draw(unsigned char x0, unsigned char y0, unsigned char x1, unsigned char y1) {
-	
-	unsigned int i, n;
+	unsigned int address=0;
+	unsigned int  n=0;
 
-	for (i = x0; i <= x1; i++) {
-		for (n= y0; n< y1; n++) {
-//########################################### BORDURE DROITE
-				if((i==x0) && (n==y0)) {
-					T6963C_writeAt(i, n,OBSTACLE_A);
-				} 
-				if ((i==x0) &&(n>0)){
-					T6963C_writeAt(i, n,OBSTACLE_D);				
-				}
-				if ((i==x0) &&(n==y1-1)){
-					T6963C_writeAt(i, n,OBSTACLE_F);				
-				}
-//########################################### BORDURE GAUCHE
-				if((i==x1) && (n==y0)) {
-					T6963C_writeAt(i, n,OBSTACLE_C);
-				} 
+	//Première ligne
+	T6963C_writeAt(x0, y0,OBSTACLE_A);
+	address = T6963C_calculateAddress(x0+1,y0);
+	T6963C_autoRepeat(address, OBSTACLE_B,x1-1); 
+	T6963C_writeAt(x1,y0,OBSTACLE_C);
 
-				if((i==x1) &&(n>0)) {
-					T6963C_writeAt(i, n,OBSTACLE_E);
-				}
+	//Ligne entre deux
+	for (n=y0+1; n<= y1-1; n++) {
+		T6963C_writeAt(x0, n,OBSTACLE_D);
+			T6963C_writeAt(x1, n,OBSTACLE_E);
+	}
 
-				if ((i==x1) &&(n==y1-1)){
-					T6963C_writeAt(i, n,OBSTACLE_H);				
-				}
-				
+	//Dernière ligne
+	T6963C_writeAt(x0, y1,OBSTACLE_F);
+	address = T6963C_calculateAddress(x0+1,y1);
+	T6963C_autoRepeat(address, OBSTACLE_G,x1-1); 
+	T6963C_writeAt(x1,y1,OBSTACLE_H);	
 
-//########################################### BORDURE HAUT
-
-				if((i>x0) && (i<x1)  && (n==y0)) {
-					T6963C_writeAt(i, n,OBSTACLE_B);
-				} 
-
-//########################################### BORDURE BAS
-				if((i>x0) && (i<x1) && (n==y1-1)) {
-					T6963C_writeAt(i, n,OBSTACLE_G);
-				} 
-			}
-		}
 
 }
 
@@ -101,11 +86,12 @@ void GMB_draw(unsigned char x0, unsigned char y0, unsigned char x1, unsigned cha
  * @param x1, y1: Coordonnées de l'angle inférieur gauche.
  */
 void GMB_clear(unsigned char x0, unsigned char y0, unsigned char x1, unsigned char y1) {
-	unsigned int address;
-	unsigned int i, n;
-			for (n= y0+1; n<(y1-1); n++) {
-				address = T6963C_calculateAddress(x0+1,n);
-				T6963C_autoRepeat(address, 0x00, (x1-1)); //Caractère espace
+	unsigned int address=0;
+	unsigned int n=0,i=0;
+			for (n= y0; n<=y1; n++) {
+				for(i=x0; i<=x1; i++){
+					T6963C_writeAt(i, n,EMPTY);
+				}
 			}
 }
 
@@ -123,9 +109,9 @@ void GMB_clear(unsigned char x0, unsigned char y0, unsigned char x1, unsigned ch
  */
 void GMB_display(unsigned char x0, unsigned char y0, char *text) {
 	unsigned int address;
-	unsigned int i;
-		
-		int taille=0;
+	unsigned int i=0;
+	unsigned int taille=0;
+
 		while(text[taille]){
 			taille++;
 		}
@@ -139,8 +125,12 @@ void GMB_display(unsigned char x0, unsigned char y0, char *text) {
 		//Ligne millieu
 		T6963C_writeAt(x0, y0+1,OBSTACLE_D);
 		T6963C_writeAt(x0+taille+1, y0+1,OBSTACLE_E);
-		address = T6963C_calculateAddress(x0+1,y0+1);
-		T6963C_autoWrite(address,text,taille);
+
+		while(text[i]){
+			T6963C_writeAt(x0+1+i, y0+1,text[i]-32);
+			i++;
+		}
+
 		//Dernière ligne
 		T6963C_writeAt(x0, y0+2,OBSTACLE_F);
 		address = T6963C_calculateAddress(x0+1,y0+2);
