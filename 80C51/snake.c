@@ -8,7 +8,7 @@
 #define FRUIT_CALORIES 3
 
 /**
- * Modifie les coordonnées du serpent selon sa direction.
+ * Modifie les coordonnÃ©es du serpent selon sa direction.
  * @param snake La description du serpent.
  */
 void SNAKE_move(Snake *snake) {
@@ -32,8 +32,8 @@ void SNAKE_move(Snake *snake) {
 }
 
 /**
- * Décide si le serpent vit ou meurt, ou mange un fruit, selon
- * sa position et ce qui se trouve à cet endroit.
+ * DÃ©cide si le serpent vit ou meurt, ou mange un fruit, selon
+ * sa position et ce qui se trouve Ã  cet endroit.
  * @param snake La description du serpent.
  */
 void SNAKE_liveOrDie(Snake *snake) {
@@ -87,19 +87,12 @@ void SNAKE_liveOrDie(Snake *snake) {
 			break;
 		}
 
-/*#define OBSTACLE_A (0x21 + CHAR_BASE)
-#define OBSTACLE_B (0x22 + CHAR_BASE)
-#define OBSTACLE_C (0x23 + CHAR_BASE)
-#define OBSTACLE_D (0x24 + CHAR_BASE)
-#define OBSTACLE_E (0x25 + CHAR_BASE)
-#define OBSTACLE_F (0x26 + CHAR_BASE)
-#define OBSTACLE_G (0x27 + CHAR_BASE)
-#define OBSTACLE_H*/
+
 }
 
 /**
- * Affiche la tête du serpent.
- * @param snake La définition du serpent.
+ * Affiche la tÃªte du serpent.
+ * @param snake La dÃ©finition du serpent.
  */
 void SNAKE_showHead(Snake *snake) {
 			
@@ -113,8 +106,8 @@ void SNAKE_showHead(Snake *snake) {
 
 /**
  * Affiche le corps du serpent, et efface la queue du serpent.
- * Aussi, si le serpent a mangé un fruit, affiche un caractère spécial.
- * @param snake La définition du serpent.
+ * Aussi, si le serpent a mangÃ© un fruit, affiche un caractÃ¨re spÃ©cial.
+ * @param snake La dÃ©finition du serpent.
  */
 void SNAKE_showBody(Snake *snake) {
 	unsigned char nbr_corps=0;
@@ -147,10 +140,10 @@ void SNAKE_showBody(Snake *snake) {
 }
 
 /**
- * Décide de varier la direction du serpent selon la direction indiquée.
- * Le serpent ne peut jamais tourner de 180º en un mouvement.
+ * DÃ©cide de varier la direction du serpent selon la direction indiquÃ©e.
+ * Le serpent ne peut jamais tourner de 180Âº en un mouvement.
  * @param snake La description du serpent.
- * @param arrow La direction désirée.
+ * @param arrow La direction dÃ©sirÃ©e.
  Interdits
 	Gauche ->
  */
@@ -196,9 +189,9 @@ switch (arrow) {
 }
 
 /**
- * Effectue une itération dans la vie du serpent.
- * @param snake La définition du serpent.
- * @return L'état du serpent après l'itération.
+ * Effectue une itÃ©ration dans la vie du serpent.
+ * @param snake La dÃ©finition du serpent.
+ * @return L'Ã©tat du serpent aprÃ¨s l'itÃ©ration.
  */
 Status SNAKE_iterate(Snake *snake, Arrow arrow) {
 	SNAKE_showBody(snake);
@@ -213,8 +206,8 @@ Status SNAKE_iterate(Snake *snake, Arrow arrow) {
 #ifdef TEST
 
 // ========================== Tests unitaires =================================
-// Chaque test vérifie le comportement d'une fonctionnalité en établissant
-// un état initial et en vérifiant l'état final.
+// Chaque test vÃ©rifie le comportement d'une fonctionnalitÃ© en Ã©tablissant
+// un Ã©tat initial et en vÃ©rifiant l'Ã©tat final.
 int testSnakeTurnsTo(Direction currentDirection, Arrow turn, Direction expectedResult, char *testCode) {
 	Snake snake = {MOVES_RIGHT, {10, 10}, ALIVE, 0};
 	snake.direction = currentDirection;
@@ -331,9 +324,9 @@ int testSnakeHitsABorder() {
 
 // =========================== Tests de comportement ============================
 // Chaque test:
-// 1- Établit un état initial.
-// 2- Simule un scénario qu'un utilisateur pourrait réaliser manuellement.
-// 3- Vérifie, en contrôlant le contenu de l'écran, que ce 
+// 1- Ã‰tablit un Ã©tat initial.
+// 2- Simule un scÃ©nario qu'un utilisateur pourrait rÃ©aliser manuellement.
+// 3- VÃ©rifie, en contrÃ´lant le contenu de l'Ã©cran, que ce 
 //    que percevrait l'utilisateur est juste
 
 int bddSnakeHitsItsTail() {
@@ -455,8 +448,8 @@ int bddSnakeGrows() {
 
 /**
  * Collection de tests.
- * Les tests en erreur sont affichés à l'écran.
- * @return Le nombre de tests échoués.
+ * Les tests en erreur sont affichÃ©s Ã  l'Ã©cran.
+ * @return Le nombre de tests Ã©chouÃ©s.
  */
 int testSnake() {
 	int testsInError = 0;
